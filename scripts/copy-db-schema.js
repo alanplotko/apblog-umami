@@ -16,7 +16,7 @@ function getDatabase() {
 
 const databaseType = getDatabase();
 
-if (!databaseType || !['mysql', 'postgresql'].includes(databaseType)) {
+if (!databaseType || !['mysql', 'postgresql', 'mongodb'].includes(databaseType)) {
   throw new Error('Missing or invalid database');
 }
 

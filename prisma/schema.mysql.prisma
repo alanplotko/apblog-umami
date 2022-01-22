@@ -1,30 +1,31 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model account {
-  user_id    Int       @id @default(autoincrement()) @db.UnsignedInt
-  username   String    @unique @db.VarChar(255)
-  password   String    @db.VarChar(60)
+  user_id    String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  username   String    @unique
+  password   String
   is_admin   Boolean   @default(false)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
   website    website[]
 }
 
 model event {
-  event_id    Int       @id @default(autoincrement()) @db.UnsignedInt
-  website_id  Int       @db.UnsignedInt
-  session_id  Int       @db.UnsignedInt
-  created_at  DateTime? @default(now()) @db.Timestamp(0)
-  url         String    @db.VarChar(500)
-  event_type  String    @db.VarChar(50)
-  event_value String    @db.VarChar(50)
+  event_id    String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  website_id  Int
+  session_id  Int
+  created_at  DateTime? @default(now())
+  url         String
+  event_type  String
+  event_value String
   session     session   @relation(fields: [session_id], references: [session_id])
   website     website   @relation(fields: [website_id], references: [website_id])
 
@@ -34,12 +35,12 @@ model event {
 }
 
 model pageview {
-  view_id    Int       @id @default(autoincrement()) @db.UnsignedInt
-  website_id Int       @db.UnsignedInt
-  session_id Int       @db.UnsignedInt
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  url        String    @db.VarChar(500)
-  referrer   String?   @db.VarChar(500)
+  view_id    String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  website_id Int
+  session_id Int
+  created_at DateTime? @default(now())
+  url        String
+  referrer   String?
   session    session   @relation(fields: [session_id], references: [session_id])
   website    website   @relation(fields: [website_id], references: [website_id])
 
@@ -51,17 +52,17 @@ model pageview {
 }
 
 model session {
-  session_id   Int        @id @default(autoincrement()) @db.UnsignedInt
-  session_uuid String     @unique @db.VarChar(36)
-  website_id   Int        @db.UnsignedInt
-  created_at   DateTime?  @default(now()) @db.Timestamp(0)
-  hostname     String?    @db.VarChar(100)
-  browser      String?    @db.VarChar(20)
-  os           String?    @db.VarChar(20)
-  device       String?    @db.VarChar(20)
-  screen       String?    @db.VarChar(11)
-  language     String?    @db.VarChar(35)
-  country      String?    @db.Char(2)
+  session_id    String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  session_uuid String     @unique
+  website_id   Int
+  created_at   DateTime?  @default(now())
+  hostname     String?
+  browser      String?
+  os           String?
+  device       String?
+  screen       String?
+  language     String?
+  country      String?
   website      website    @relation(fields: [website_id], references: [website_id])
   event        event[]
   pageview     pageview[]
@@ -71,13 +72,13 @@ model session {
 }
 
 model website {
-  website_id   Int        @id @default(autoincrement()) @db.UnsignedInt
-  website_uuid String     @unique @db.VarChar(36)
-  user_id      Int        @db.UnsignedInt
-  name         String     @db.VarChar(100)
-  domain       String?    @db.VarChar(500)
-  share_id     String?    @unique @db.VarChar(64)
-  created_at   DateTime?  @default(now()) @db.Timestamp(0)
+  website_id   String     @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  website_uuid String     @unique
+  user_id      Int
+  name         String
+  domain       String?
+  share_id     String?    @unique
+  created_at   DateTime?  @default(now())
   account      account    @relation(fields: [user_id], references: [user_id])
   event        event[]
   pageview     pageview[]
